@@ -1,10 +1,14 @@
 
 import { ChevronDown, ArrowRight } from "lucide-react";
 import AnimatedSection from "./AnimatedSection";
+import ThreeBackground from "./ThreeBackground";
 
 const Hero = () => {
   return (
     <section id="home" className="relative min-h-screen flex items-center bg-hero-pattern pt-16">
+      {/* 3D Animated Background */}
+      <ThreeBackground />
+      
       <div className="absolute inset-0 bg-gradient-radial from-transparent to-background/80 z-0"></div>
       <div className="section-container relative z-10">
         <div className="max-w-3xl mx-auto text-center">

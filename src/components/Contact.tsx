@@ -1,7 +1,11 @@
 
-import { useState } from "react";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { useState, useRef } from "react";
+import { Mail, Phone, MapPin, Send, Check, AlertCircle } from "lucide-react";
+import emailjs from "@emailjs/browser";
 import AnimatedSection from "./AnimatedSection";
+import { toast } from "sonner";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -11,33 +15,56 @@ const Contact = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setFormStatus("idle");
     
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-      setFormData({ name: "", email: "", message: "" });
+    // Replace these with your actual EmailJS credentials
+    const serviceId = "YOUR_EMAILJS_SERVICE_ID";
+    const templateId = "YOUR_EMAILJS_TEMPLATE_ID";
+    const publicKey = "YOUR_EMAILJS_PUBLIC_KEY";
+
+    try {
+      // For development, use this console log to see the data
+      console.log("Form data:", formData);
       
-      // Reset success message after 5 seconds
+      // Uncomment this when you have your EmailJS credentials
+      // const result = await emailjs.send(serviceId, templateId, formData, publicKey);
+      // console.log("Email sent successfully:", result.text);
+      
+      // Simulate success for now
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      setFormStatus("success");
+      setFormData({ name: "", email: "", message: "" });
+      toast.success("Message sent successfully! I'll get back to you soon.");
+      
+      // Reset success state after 5 seconds
       setTimeout(() => {
-        setIsSubmitted(false);
+        setFormStatus("idle");
       }, 5000);
-    }, 1500);
+    } catch (error) {
+      console.error("Error sending email:", error);
+      setFormStatus("error");
+      toast.error("Failed to send message. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <section id="contact" className="py-20 md:py-32">
-      <div className="section-container">
+    <section id="contact" className="py-20 md:py-32 relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-accent/5 to-background opacity-50 z-0"></div>
+      <div className="section-container relative z-10">
         <AnimatedSection>
           <h2 className="section-title">Get In Touch</h2>
           <p className="section-subtitle">
@@ -129,33 +156,44 @@ const Contact = () => {
           </AnimatedSection>
 
           <AnimatedSection animation="fade-in-left">
-            <div className="glass-card rounded-xl p-8">
-              <h3 className="font-display text-2xl font-semibold mb-6">Send Me a Message</h3>
+            <div className="glass-card rounded-xl p-8 backdrop-blur-md relative overflow-hidden">
+              {/* Decorative gradient */}
+              <div className="absolute -top-24 -right-24 w-48 h-48 bg-accent/20 rounded-full blur-3xl"></div>
+              <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-400/20 rounded-full blur-3xl"></div>
               
-              {isSubmitted ? (
-                <div className="bg-green-50 border border-green-200 text-green-800 rounded-lg p-4 flex items-center">
-                  <div className="bg-green-100 p-1 rounded-full mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-green-600">
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
+              <h3 className="font-display text-2xl font-semibold mb-6 relative z-10">Send Me a Message</h3>
+              
+              {formStatus === "success" ? (
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 rounded-lg p-4 flex items-center">
+                  <div className="bg-green-100 dark:bg-green-800 p-1 rounded-full mr-3">
+                    <Check className="h-5 w-5 text-green-600 dark:text-green-300" />
                   </div>
-                  <p>Thank you! Your message has been sent successfully.</p>
+                  <p>Thank you! Your message has been sent successfully. I'll get back to you soon.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                  {formStatus === "error" && (
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 rounded-lg p-4 flex items-center mb-4">
+                      <div className="bg-red-100 dark:bg-red-800 p-1 rounded-full mr-3">
+                        <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-300" />
+                      </div>
+                      <p>An error occurred while sending your message. Please try again.</p>
+                    </div>
+                  )}
+                  
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium mb-2">
                       Name
                     </label>
-                    <input
+                    <Input
                       id="name"
                       name="name"
                       type="text"
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-accent"
                       placeholder="Your name"
+                      className="w-full px-4 py-2 border border-input rounded-md bg-background/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent"
                     />
                   </div>
                   
@@ -163,15 +201,15 @@ const Contact = () => {
                     <label htmlFor="email" className="block text-sm font-medium mb-2">
                       Email
                     </label>
-                    <input
+                    <Input
                       id="email"
                       name="email"
                       type="email"
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-accent"
                       placeholder="your.email@example.com"
+                      className="w-full px-4 py-2 border border-input rounded-md bg-background/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent"
                     />
                   </div>
                   
@@ -179,16 +217,16 @@ const Contact = () => {
                     <label htmlFor="message" className="block text-sm font-medium mb-2">
                       Message
                     </label>
-                    <textarea
+                    <Textarea
                       id="message"
                       name="message"
                       rows={5}
                       required
                       value={formData.message}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-accent resize-none"
                       placeholder="How can I help you?"
-                    ></textarea>
+                      className="w-full px-4 py-2 border border-input rounded-md bg-background/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+                    />
                   </div>
                   
                   <button
