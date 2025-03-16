@@ -1,5 +1,5 @@
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { MeshDistortMaterial, Sphere, Float } from "@react-three/drei";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -28,41 +28,52 @@ function FloatingSpheres() {
   return (
     <>
       <Float speed={1.5} rotationIntensity={0.5} floatIntensity={1.5}>
-        <Sphere ref={meshRef1} args={[1, 32, 32]} position={[-3, 0, 0]}>
+        <mesh ref={meshRef1} position={[-3, 0, 0]}>
+          <sphereGeometry args={[1, 32, 32]} />
           <MeshDistortMaterial
             color="#8B5CF6"
-            attach="material"
             distort={0.3}
             speed={2}
             roughness={0}
           />
-        </Sphere>
+        </mesh>
       </Float>
 
       <Float speed={2} rotationIntensity={0.5} floatIntensity={1.5}>
-        <Sphere ref={meshRef2} args={[1.2, 32, 32]} position={[3, 2, -2]}>
+        <mesh ref={meshRef2} position={[3, 2, -2]}>
+          <sphereGeometry args={[1.2, 32, 32]} />
           <MeshDistortMaterial
             color="#0EA5E9"
-            attach="material"
             distort={0.4}
             speed={3}
             roughness={0}
           />
-        </Sphere>
+        </mesh>
       </Float>
 
       <Float speed={2.5} rotationIntensity={0.7} floatIntensity={1.5}>
-        <Sphere ref={meshRef3} args={[0.8, 32, 32]} position={[2, -2, -1]}>
+        <mesh ref={meshRef3} position={[2, -2, -1]}>
+          <sphereGeometry args={[0.8, 32, 32]} />
           <MeshDistortMaterial
             color="#9681EB"
-            attach="material"
             distort={0.2}
             speed={2}
             roughness={0}
           />
-        </Sphere>
+        </mesh>
       </Float>
     </>
+  );
+}
+
+// Error boundary component for Three.js errors
+function ErrorFallback() {
+  return (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="p-4 bg-red-50 text-red-500 rounded-md">
+        Could not load 3D effects
+      </div>
+    </div>
   );
 }
 
@@ -76,9 +87,11 @@ const ThreeBackground = () => {
   return (
     <div className="absolute inset-0 z-0 opacity-60">
       <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={0.5} />
-        <FloatingSpheres />
+        <Suspense fallback={null}>
+          <ambientLight intensity={0.5} />
+          <directionalLight position={[10, 10, 5]} intensity={0.5} />
+          <FloatingSpheres />
+        </Suspense>
       </Canvas>
     </div>
   );
