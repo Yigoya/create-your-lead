@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import AnimatedCursor from "@/components/AnimatedCursor";
 import ScrollProgress from "@/components/ScrollProgress";
 import StorySection from "@/components/StorySection";
+import TourGuide from "@/components/TourGuide";
 
 const Index = () => {
   return (
@@ -23,6 +24,7 @@ const Index = () => {
       <Projects />
       <Contact />
       <Footer />
+      <TourGuide />
     </div>
   );
 };
