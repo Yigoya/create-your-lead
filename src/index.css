@@ -83,7 +83,6 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
-    cursor: none;
   }
   
   ::selection {
@@ -148,7 +147,7 @@
   }
   
   .glass-card {
-    @apply bg-white/80 dark:bg-black/80 backdrop-blur-md border border-white/10 dark:border-black/10 shadow-lg;
+    @apply bg-white/80 dark:bg-black/80 backdrop-blur-md border border-white/10 dark:border-white/5 shadow-lg;
   }
   
   .section-container {
@@ -170,6 +169,19 @@
   .focus-ring {
     @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-opacity-75;
   }
+
+  /* Enhanced animation classes */
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300 hover:shadow-[0_0_15px_rgba(var(--accent),0.5)];
+  }
 }
 
 /* Smooth scrolling */
@@ -185,4 +197,3 @@ html {
 
 /* Importing fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-

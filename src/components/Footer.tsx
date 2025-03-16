@@ -25,7 +25,9 @@ const Footer = () => {
             
             <div className="flex items-center gap-4">
               <a
-                href="#"
+                href="https://github.com/Yigoya"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-foreground/70 hover:text-accent transition-colors focus-ring"
                 aria-label="GitHub"
               >
@@ -43,7 +45,9 @@ const Footer = () => {
                 </svg>
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com/in/yigermal-abebe"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-foreground/70 hover:text-accent transition-colors focus-ring"
                 aria-label="LinkedIn"
               >

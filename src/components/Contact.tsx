@@ -28,21 +28,19 @@ const Contact = () => {
     setIsSubmitting(true);
     setFormStatus("idle");
     
-    // Replace these with your actual EmailJS credentials
-    const serviceId = "YOUR_EMAILJS_SERVICE_ID";
-    const templateId = "YOUR_EMAILJS_TEMPLATE_ID";
-    const publicKey = "YOUR_EMAILJS_PUBLIC_KEY";
+    // EmailJS credentials - you'll need to set these up with your account
+    const serviceId = "service_emailjs_id"; // Replace with your service ID
+    const templateId = "template_emailjs_id"; // Replace with your template ID
+    const publicKey = "your_emailjs_public_key"; // Replace with your public key
 
     try {
-      // For development, use this console log to see the data
-      console.log("Form data:", formData);
-      
-      // Uncomment this when you have your EmailJS credentials
-      // const result = await emailjs.send(serviceId, templateId, formData, publicKey);
-      // console.log("Email sent successfully:", result.text);
-      
-      // Simulate success for now
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      if (!publicKey || publicKey === "your_emailjs_public_key") {
+        console.log("Form data that would be sent:", formData);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        toast.info("Demo mode: EmailJS credentials not configured. Message not actually sent.");
+      } else {
+        await emailjs.send(serviceId, templateId, formData, publicKey);
+      }
       
       setFormStatus("success");
       setFormData({ name: "", email: "", message: "" });
@@ -87,8 +85,8 @@ const Contact = () => {
                   </div>
                   <div>
                     <h4 className="font-medium">Email</h4>
-                    <a href="mailto:yigermal@example.com" className="text-muted-foreground hover:text-accent transition-colors">
-                      yigermal@example.com
+                    <a href="mailto:yigoya7@gmail.com" className="text-muted-foreground hover:text-accent transition-colors">
+                      yigoya7@gmail.com
                     </a>
                   </div>
                 </div>
@@ -99,8 +97,8 @@ const Contact = () => {
                   </div>
                   <div>
                     <h4 className="font-medium">Phone</h4>
-                    <a href="tel:+1234567890" className="text-muted-foreground hover:text-accent transition-colors">
-                      +123 456 7890
+                    <a href="tel:+251931770081" className="text-muted-foreground hover:text-accent transition-colors">
+                      +251 931 770 081
                     </a>
                   </div>
                 </div>
@@ -122,7 +120,9 @@ const Contact = () => {
                 <h4 className="font-medium mb-4">Connect with me</h4>
                 <div className="flex gap-4">
                   <a 
-                    href="#" 
+                    href="https://github.com/Yigoya" 
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="bg-secondary hover:bg-secondary/80 text-foreground p-3 rounded-full transition-colors focus-ring"
                     aria-label="GitHub"
                   >
@@ -131,7 +131,9 @@ const Contact = () => {
                     </svg>
                   </a>
                   <a 
-                    href="#" 
+                    href="https://www.linkedin.com/in/yigermal-abebe" 
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="bg-secondary hover:bg-secondary/80 text-foreground p-3 rounded-full transition-colors focus-ring"
                     aria-label="LinkedIn"
                   >
