@@ -11,7 +11,7 @@ const tourSteps = [
   {
     id: "welcome",
     target: "#home",
-    content: "Hi there! I'm Yoki, your digital assistant. Let me show you around Yigermal's portfolio!",
+    content: "Hi there! I'm Yigo, your digital assistant. Let me show you around Yigermal's portfolio!",
     position: "center",
   },
   {
@@ -180,7 +180,7 @@ export const TourGuide = () => {
               
               {/* Tour Content */}
               <div className="p-4 pt-12 text-center">
-                <h3 className="font-display text-lg font-bold mb-2">Yoki</h3>
+                <h3 className="font-display text-lg font-bold mb-2">Yigo</h3>
                 <p className="text-sm text-muted-foreground mb-4">{currentTourStep.content}</p>
                 
                 {/* Tour Controls */}
