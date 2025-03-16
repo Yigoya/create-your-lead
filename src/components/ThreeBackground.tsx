@@ -3,6 +3,7 @@ import { useRef, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { MeshDistortMaterial, Sphere, Float } from "@react-three/drei";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import * as THREE from "three";
 
 function FloatingSpheres() {
   const meshRef1 = useRef<THREE.Mesh>(null);
