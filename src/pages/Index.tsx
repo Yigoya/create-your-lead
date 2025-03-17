@@ -10,6 +10,7 @@ import AnimatedCursor from "@/components/AnimatedCursor";
 import ScrollProgress from "@/components/ScrollProgress";
 import StorySection from "@/components/StorySection";
 import TourGuide from "@/components/TourGuide";
+import InteractiveCharacter from "@/components/InteractiveCharacter";
 
 const Index = () => {
   return (
@@ -25,6 +26,7 @@ const Index = () => {
       <Contact />
       <Footer />
       <TourGuide />
+      <InteractiveCharacter />
     </div>
   );
 };
