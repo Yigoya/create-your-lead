@@ -1,77 +1,50 @@
 
 import { useRef, useEffect, useState } from 'react';
-import { Canvas, useFrame, extend, useThree } from '@react-three/fiber';
-import { useGLTF, OrbitControls, PerspectiveCamera, Html } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useTheme } from '@/hooks/use-theme';
 import { motion } from 'framer-motion';
 
-// Character component that will be loaded inside Canvas
+// Character component that will be rendered inside Canvas
 function Character({ cursorPosition, scrollProgress, isWaving = false }) {
   const { theme } = useTheme();
-  const mesh = useRef<THREE.Group>();
-  const mixer = useRef<THREE.AnimationMixer>();
+  const meshRef = useRef<THREE.Mesh>();
+  const groupRef = useRef<THREE.Group>();
   const clock = new THREE.Clock();
-  
-  // Define character model URL - using a placeholder model
-  const characterUrl = "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/robot/model.gltf";
-
-  // Load character model with animations
-  const { scene, animations } = useGLTF(characterUrl);
-  
-  // Clone the model to prevent reference issues
-  const model = scene.clone();
-  
-  useEffect(() => {
-    if (model && animations && animations.length > 0) {
-      // Set up animation mixer
-      mixer.current = new THREE.AnimationMixer(model);
-      
-      // Play default idle animation
-      const idleAction = mixer.current.clipAction(animations[0]);
-      idleAction.play();
-      
-      // Add the model to our ref
-      if (mesh.current) {
-        mesh.current.add(model);
-      }
-    }
-
-    return () => {
-      // Clean up
-      mixer.current?.stopAllAction();
-    };
-  }, [model, animations]);
   
   // Update character on each frame
   useFrame(() => {
-    if (!mesh.current) return;
-    
-    // Update animation mixer
-    if (mixer.current) {
-      mixer.current.update(clock.getDelta());
-    }
+    if (!groupRef.current || !meshRef.current) return;
     
     // Move character based on cursor position (with smoothing)
     const targetX = cursorPosition.x * 2 - 1;
     const targetY = -(cursorPosition.y * 2 - 1);
     
-    mesh.current.position.x += (targetX - mesh.current.position.x) * 0.1;
-    mesh.current.position.y += (targetY - mesh.current.position.y) * 0.1;
+    groupRef.current.position.x += (targetX - groupRef.current.position.x) * 0.1;
+    groupRef.current.position.y += (targetY - groupRef.current.position.y) * 0.1;
     
     // Make character look at cursor
-    mesh.current.lookAt(targetX * 3, targetY * 3, 1);
+    groupRef.current.lookAt(targetX * 3, targetY * 3, 1);
     
     // Add some idle animation - gentle floating
-    mesh.current.position.y += Math.sin(clock.getElapsedTime()) * 0.005;
+    groupRef.current.position.y += Math.sin(clock.getElapsedTime()) * 0.005;
+    
+    // Gentle rotation
+    meshRef.current.rotation.y += 0.01;
     
     // React to scroll
     const scrollRotation = scrollProgress * Math.PI * 2;
-    mesh.current.rotation.z = THREE.MathUtils.lerp(
-      mesh.current.rotation.z,
+    groupRef.current.rotation.z = THREE.MathUtils.lerp(
+      groupRef.current.rotation.z,
       scrollRotation * 0.1,
       0.1
     );
+    
+    // If waving, add a bobbing motion
+    if (isWaving) {
+      meshRef.current.rotation.x = Math.sin(clock.getElapsedTime() * 5) * 0.2;
+    }
   });
   
   // Create a speech bubble that follows the character
@@ -79,17 +52,56 @@ function Character({ cursorPosition, scrollProgress, isWaving = false }) {
     if (!isWaving) return null;
     
     return (
-      <Html position={[0, 1.2, 0]} center>
-        <div className="px-3 py-2 rounded-xl bg-background/90 backdrop-blur-sm border border-accent/20 text-xs shadow-lg">
+      <Html position={[0, 1.5, 0]} center>
+        <div className="px-3 py-2 rounded-xl bg-background/90 backdrop-blur-sm border border-accent/20 text-sm shadow-lg">
           👋 Hi there! Welcome to Yigermal's portfolio!
         </div>
       </Html>
     );
   };
 
+  const isDarkTheme = theme === 'dark';
+
   return (
-    <group ref={mesh} position={[0, 0, 0]} scale={0.5}>
-      {/* Character will be added to this group via the useEffect */}
+    <group ref={groupRef} position={[0, 0, 0]}>
+      {/* Using simple shapes instead of loading a GLTF model */}
+      <mesh ref={meshRef} position={[0, 0, 0]}>
+        <sphereGeometry args={[0.5, 32, 32]} />
+        <meshStandardMaterial 
+          color={isDarkTheme ? "#9c88ff" : "#6c5ce7"} 
+          emissive={isDarkTheme ? "#6c5ce7" : "#341f97"} 
+          emissiveIntensity={0.2}
+          metalness={0.8}
+          roughness={0.2}
+        />
+      </mesh>
+      
+      {/* Eyes */}
+      <mesh position={[0.2, 0.15, 0.4]}>
+        <sphereGeometry args={[0.1, 16, 16]} />
+        <meshStandardMaterial color="#ffffff" />
+      </mesh>
+      <mesh position={[-0.2, 0.15, 0.4]}>
+        <sphereGeometry args={[0.1, 16, 16]} />
+        <meshStandardMaterial color="#ffffff" />
+      </mesh>
+      
+      {/* Pupils */}
+      <mesh position={[0.2, 0.15, 0.5]}>
+        <sphereGeometry args={[0.05, 16, 16]} />
+        <meshStandardMaterial color="#000000" />
+      </mesh>
+      <mesh position={[-0.2, 0.15, 0.5]}>
+        <sphereGeometry args={[0.05, 16, 16]} />
+        <meshStandardMaterial color="#000000" />
+      </mesh>
+      
+      {/* Smile */}
+      <mesh position={[0, -0.1, 0.4]} rotation={[0, 0, Math.PI]}>
+        <torusGeometry args={[0.2, 0.05, 16, 16, Math.PI]} />
+        <meshStandardMaterial color="#ff6b6b" />
+      </mesh>
+      
       <SpeechBubble />
     </group>
   );
@@ -148,7 +160,14 @@ const InteractiveCharacter = () => {
         style={{ width: '100%', height: '100%' }}
       >
         <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={0.8} />
+        <directionalLight position={[10, 10, 5]} intensity={1} />
+        <spotLight 
+          position={[0, 5, 5]} 
+          angle={0.3} 
+          penumbra={1} 
+          intensity={1} 
+          castShadow
+        />
         <Character 
           cursorPosition={cursorPosition}
           scrollProgress={scrollProgress}
