@@ -4,7 +4,7 @@ import AnimatedSection from "./AnimatedSection";
 
 const About = () => {
   const highlights = [
-    "5+ years of full-stack development experience",
+    "3+ years of full-stack development experience",
     "Proficient in multiple front-end and back-end technologies",
     "Strong problem-solving and architectural skills",
     "Collaborative team player with excellent communication",

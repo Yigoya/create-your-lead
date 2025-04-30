@@ -34,7 +34,7 @@ const Projects = () => {
       description:
         "A comprehensive social media platform with real-time messaging, post sharing, and user profiles.",
       category: ["mobile", "fullstack"],
-      technologies: ["Flutter", "Express", "MongoDB", "Socket.io"],
+      technologies: ["Flutter", "Django", "MongoDB", "WebSocket"],
       image: "https://placehold.co/600x400/222/fff?text=Social+Media+App",
       links: {
         github: "#",
@@ -57,7 +57,7 @@ const Projects = () => {
       description:
         "A culturally-sensitive dating app designed with respect for Islamic traditions, featuring profile matching and messaging.",
       category: ["mobile", "fullstack"],
-      technologies: ["Flutter", "Node.js", "MongoDB", "Firebase"],
+      technologies: ["Flutter", "Django", "MongoDB", "Firebase"],
       image: "https://placehold.co/600x400/222/fff?text=Dating+App",
       links: {
         github: "#",
@@ -153,7 +153,7 @@ const Projects = () => {
                     ))}
                   </div>
                   
-                  <div className="flex gap-3">
+                  {/* <div className="flex gap-3">
                     {project.links.github && (
                       <a
                         href={project.links.github}
@@ -177,7 +177,7 @@ const Projects = () => {
                         Live Demo
                       </a>
                     )}
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </AnimatedSection>
